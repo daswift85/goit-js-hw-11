@@ -56,6 +56,16 @@ async function fetchImages() {
   
       if (images.length < 40) {
         loadMoreBtn.style.display = 'none';
+        const toTopBtn = document.createElement('button');
+        toTopBtn.classList.add('to-top-btn');
+        toTopBtn.textContent = 'To Top';
+        document.body.appendChild(toTopBtn);
+        toTopBtn.addEventListener('click', () => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
         return;
       }
@@ -66,9 +76,25 @@ async function fetchImages() {
       Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
   
     } catch (error) {
-      console.log('Error on fetchImages: ', error);
+        if (error.response && error.response.status === 400) {
+          loadMoreBtn.style.display = 'none';
+          const toTopBtn = document.createElement('button');
+          toTopBtn.classList.add('to-top-btn');
+          toTopBtn.textContent = 'To Top';
+          document.body.appendChild(toTopBtn);
+          toTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          });
+          Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+        } else {
+          console.log('Error on fetchImages: ', error);
+        }
+      }
+      
     }
-  }
   
   function appendImagesMarkup(images) {
     const markup = images
